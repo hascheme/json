@@ -36,6 +36,7 @@
   (import
     (scheme)
     (only (core alist) vector->alist)
+    (only (core string) string-replace)
   )
  
 
@@ -128,10 +129,11 @@
                 
   (define json->string
     (lambda (lst)
+      (define (str-conver str) (string-replace str "\"" "\\\""))
       (define f
         (lambda (x)
           (cond 		          
-            ((string? x) (string-append "\"" x "\""))		             
+            ((string? x) (string-append "\"" (str-conver x) "\""))
             ((number? x) (number->string x))		             
             ((symbol? x) (symbol->string x)))))
       (define c
@@ -152,16 +154,16 @@
                 (string-append y "]"))))
           (let ((k (cdar lst)))
             (if (null? (cdr lst))
-              (string-append x "\"" (caar lst) "\":"
+              (string-append x "\"" (string-replace (caar lst) "\"" "\\\"") "\":"
                 (cond 
                   ((list? k)(l k "{"))
                   ((vector? k)(l k "["))
                   (else (f k))) "}")
               (l (cdr lst)
                 (cond 
-                  ((list? k)(string-append x "\"" (caar lst) "\":" (l k "{") ","))
-                  ((vector? k)(string-append x "\"" (caar lst) "\":" (l k "[") ","))
-                  (else (string-append x "\"" (caar lst) "\":" (f k) ","))))))))))
+                  ((list? k)(string-append x "\"" (str-conver (caar lst)) "\":" (l k "{") ","))
+                  ((vector? k)(string-append x "\"" (str-conver (caar lst)) "\":" (l k "[") ","))
+                  (else (string-append x "\"" (str-conver (caar lst)) "\":" (f k) ","))))))))))
                 
                 
            
