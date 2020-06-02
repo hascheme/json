@@ -129,7 +129,7 @@
                 
   (define json->string
     (lambda (lst)
-      (define (str-conver str) (string-replace str "\"" "\\\""))
+      (define (str-conver str) (string-replace str '("\"" "\\") '("\\\"" "\\\\")))
       (define f
         (lambda (x)
           (cond 		          
